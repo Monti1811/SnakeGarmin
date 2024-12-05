@@ -43,6 +43,12 @@ class snake2MenuDelegate extends WatchUi.Menu2InputDelegate {
             Storage.setValue("wall_death", wall_death);
             _parent.getItem(2).setSubLabel(wall_death ? "Disabled" : "Enabled");
             WatchUi.requestUpdate();
+        } else if (id.equals("speed_up")) {
+            var toogleMenuItem = menuItem as WatchUi.ToggleMenuItem;
+            var speed_up = toogleMenuItem.isEnabled();
+            Storage.setValue("speed_up", speed_up);
+            _parent.getItem(2).setSubLabel(speed_up ? "Disabled" : "Enabled");
+            WatchUi.requestUpdate();
         }
 
     }

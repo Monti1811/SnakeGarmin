@@ -22,6 +22,7 @@ class snake2GameView extends WatchUi.View {
     private var _timer as Timer.Timer;
     private var timer_base_step as Number = 1000;
     private var timer_step as Number = 1000;
+    private var speed_up as Boolean = true;
 
     // Snake
     private var snake_length as Number = 3;
@@ -50,6 +51,9 @@ class snake2GameView extends WatchUi.View {
         time_temp = 1000 / time_temp;
         timer_step = time_temp.toNumber();
         timer_base_step = timer_step;
+
+        speed_up = Storage.getValue("speed_up") as Boolean;
+
 
         // Initialize game
         _timer = new Timer.Timer();
@@ -101,12 +105,14 @@ class snake2GameView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.drawText(240, 310, Graphics.FONT_TINY, current_points, Graphics.TEXT_JUSTIFY_CENTER);
 
-        // Update timer step
-        var new_time = CalcTimerStep();
-        if (new_time != timer_step) {
-            timer_step = new_time;
-            _timer.stop();
-            _timer.start(method(:onTimer), timer_step, true);
+        if (speed_up) {
+            // Update timer step
+            var new_time = CalcTimerStep();
+            if (new_time != timer_step) {
+                timer_step = new_time;
+                _timer.stop();
+                _timer.start(method(:onTimer), timer_step, true);
+            }
         }
 
         // Reset variables
