@@ -1,0 +1,13 @@
+<strings>
+    <string id="AppName">Snake For Garmin</string>
+
+    <string id="title">Snake</string>
+    <string id="play">Hold to Play</string>
+    <string id="points">Points:</string>
+    <string id="gameover">Game Over!</string>
+    <string id="highscore">Highscore:</string>
+    <string id="quit">Quit</string>
+    <string id="dismiss">Dismiss</string>
+
+    <string id="arena_size">Choose the arena size</string>
+</strings>

@@ -1,0 +1,5 @@
+<layout id="GameLayout">
+    <bitmap id="id_arena" x="center" y="center" filename="../drawables/arena.png" />
+    <label x="center" y="5" text="@Strings.title" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER" />
+    <label x="160" y="310" text="@Strings.points" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER" font="Graphics.FONT_TINY" />
+</layout>

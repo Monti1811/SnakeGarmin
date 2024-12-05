@@ -1,0 +1,10 @@
+<layout id="MainLayout">
+    <bitmap id="id_snake" x="center" y="50" filename="../drawables/snake_icon3.png" />
+    <label x="center" y="5" text="@Strings.title" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER" font="Graphics.FONT_SYSTEM_MEDIUM" />
+    <label x="center" y="200" text="@Strings.play" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER" />
+    <label x="center" y="260" text="@Strings.highscore" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER" font="Graphics.FONT_TINY" />
+    <!-- Left top hint -->
+    <bitmap id="rightLow" personality="
+            system_icon_light__hint_button_right_bottom
+            system_loc__hint_button_right_bottom" />
+</layout>

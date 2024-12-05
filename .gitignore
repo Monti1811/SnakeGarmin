@@ -1,0 +1,6 @@
+bin/
+gen/
+internal-mir/
+mir/
+/snake2.prg.debug.xml
+/snake2.prg

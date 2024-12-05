@@ -1,0 +1,6 @@
+<layout id="GameOverLayout">
+    <bitmap id="id_snake_dead" x="center" y="center" filename="../drawables/snake_dead.png" />
+    <label x="center" y="50" text="@Strings.gameover" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER" />
+    <label x="center" y="250" text="@Strings.points" color="Graphics.COLOR_WHITE" justification="Graphics.TEXT_JUSTIFY_CENTER" font="Graphics.FONT_TINY" />
+</layout>
+

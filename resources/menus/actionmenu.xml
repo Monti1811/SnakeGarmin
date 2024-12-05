@@ -1,0 +1,4 @@
+<menu id="ActionMenu">
+    <menu-item id="quit" label="@Strings.quit" />
+    <menu-item id="dismiss" label="@Strings.dismiss" />
+</menu>
