@@ -33,6 +33,7 @@ class snake2GameView extends WatchUi.View {
     // Movement
     private var has_moved as Boolean = false;
     private var last_direction as Number = 3;
+    private var timer_run as Boolean = false;
 
     function initialize() {
         View.initialize();
@@ -96,27 +97,31 @@ class snake2GameView extends WatchUi.View {
         // Call the parent onUpdate function to redraw the layout
         View.onUpdate(dc);
 
-        if (!has_moved) {
+        if (!has_moved && timer_run) {
+            // Move snake
             MoveDirection(last_direction);
+            timer_run = false;
+            if (speed_up) {
+                // Update timer step
+                var new_time = CalcTimerStep();
+                if (new_time != timer_step) {
+                    timer_step = new_time;
+                    _timer.stop();
+                    _timer.start(method(:onTimer), timer_step, true);
+                }
+            }
         }
+
+        // Reset variables
+        has_moved = false;
+        timer_run = false;
         
         DrawEatingBlock(dc, eating_block[0], eating_block[1]);
         DrawSnake(dc);
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.drawText(240, 310, Graphics.FONT_TINY, current_points, Graphics.TEXT_JUSTIFY_CENTER);
 
-        if (speed_up) {
-            // Update timer step
-            var new_time = CalcTimerStep();
-            if (new_time != timer_step) {
-                timer_step = new_time;
-                _timer.stop();
-                _timer.start(method(:onTimer), timer_step, true);
-            }
-        }
-
-        // Reset variables
-        has_moved = false;
+        
     }
 
     // Called when this View is removed from the screen. Save the
@@ -287,6 +292,7 @@ class snake2GameView extends WatchUi.View {
     //! Timer callback
     public function onTimer() as Void {
         //Kick the display update
+        timer_run = true;
         WatchUi.requestUpdate();
     }
 
