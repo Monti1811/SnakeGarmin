@@ -84,6 +84,7 @@ class Menu2SampleSubMenuDelegate extends WatchUi.Menu2InputDelegate {
             case "1500":
             case "1000":
             case "500":
+            case "333":
             case "250":
                 setGameSpeed(label);
                 break;
