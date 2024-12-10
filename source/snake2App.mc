@@ -1,11 +1,13 @@
 import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
+import Toybox.System;
 
 class snake2App extends Application.AppBase {
 
     function initialize() {
         AppBase.initialize();
+        Math.srand(Time.now().value());
     }
 
     // onStart() is called on application start up

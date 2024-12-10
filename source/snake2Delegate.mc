@@ -11,25 +11,26 @@ class snake2Delegate extends WatchUi.BehaviorDelegate {
         // Initialize empty settings
         initSetting("arena_size", "18x18", String);
         initSetting("game_speed", "1x", String);
+        initSetting("obstacle_step", "Every 5 points", String);
         initSetting("wall_death", false, Boolean);
         initSetting("speed_up", true, Boolean);
     }
 
     function initSetting(name, default_value, type) {
         if (type == String) {
-            var value = Storage.getValue(name) as String;
+            var value = Storage.getValue(name) as String?;
             if (value == null || value == "") {
                 value = default_value;
                 Storage.setValue(name, value);
             }
         } else if (type == Boolean) {
-            var value = Storage.getValue(name) as Boolean;
+            var value = Storage.getValue(name) as Boolean?;
             if (value == null) {
                 value = default_value;
                 Storage.setValue(name, value);
             }
         } else if (type == Number) {
-            var value = Storage.getValue(name) as Number;
+            var value = Storage.getValue(name) as Number?;
             if (value == null) {
                 value = default_value;
                 Storage.setValue(name, value);
@@ -54,6 +55,9 @@ class snake2Delegate extends WatchUi.BehaviorDelegate {
 
         var speed = Storage.getValue("game_speed") as String;
         menu.addItem(new WatchUi.MenuItem("Game Speed", speed, "game_speed", null));
+
+        var obstacle = Storage.getValue("obstacle_step") as String;
+        menu.addItem(new WatchUi.MenuItem("Obstacle Occurence", obstacle, "obstacle_step", null));
 
         var wall_death = Storage.getValue("wall_death") as Boolean;
         menu.addItem(new WatchUi.ToggleMenuItem("Walls", {:enabled=>"Walls mean Game Over", :disabled=>"Can crawl through walls"}, "wall_death", wall_death, null));

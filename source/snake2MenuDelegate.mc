@@ -20,22 +20,35 @@ class snake2MenuDelegate extends WatchUi.Menu2InputDelegate {
             // When the toggle menu item is selected, push a new menu that demonstrates
             // left and right toggles with automatic substring toggles.
             var Menu = new WatchUi.Menu2({:title=>"Arena Size" });
-            Menu.addItem(new WatchUi.MenuItem("24x24", null, "24", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
-            Menu.addItem(new WatchUi.MenuItem("18x18", null, "18", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
-            Menu.addItem(new WatchUi.MenuItem("12x12", null, "12", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
-            Menu.addItem(new WatchUi.MenuItem("8x8", null, "8", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
-            Menu.addItem(new WatchUi.MenuItem("6x6", null, "6", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("24x24", null, "arena_size", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("18x18", null, "arena_size", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("12x12", null, "arena_size", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("8x8", null, "arena_size", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("6x6", null, "arena_size", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
             WatchUi.pushView(Menu, new $.Menu2SampleSubMenuDelegate(_parent), WatchUi.SLIDE_UP);
         } else if (id.equals("game_speed")) {
             // When the toggle menu item is selected, push a new menu that demonstrates
             // left and right toggles with automatic substring toggles.
             var Menu = new WatchUi.Menu2({:title=>"Game Speed" });
-            Menu.addItem(new WatchUi.MenuItem("0.5x", null, "2000", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
-            Menu.addItem(new WatchUi.MenuItem("0.66x", null, "1500", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
-            Menu.addItem(new WatchUi.MenuItem("1x", null, "1000", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
-            Menu.addItem(new WatchUi.MenuItem("2x", null, "500", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
-            Menu.addItem(new WatchUi.MenuItem("3x", null, "333", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
-            Menu.addItem(new WatchUi.MenuItem("4x", null, "250", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("0.5x", null, "game_speed", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("0.66x", null, "game_speed", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("1x", null, "game_speed", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("2x", null, "game_speed", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("3x", null, "game_speed", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("4x", null, "game_speed", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            WatchUi.pushView(Menu, new $.Menu2SampleSubMenuDelegate(_parent), WatchUi.SLIDE_UP);
+        } else if (id.equals("obstacle_step")) {
+            // When the toggle menu item is selected, push a new menu that demonstrates
+            // left and right toggles with automatic substring toggles.
+            var Menu = new WatchUi.Menu2({:title=>"Obstacle Occurence" });
+            Menu.addItem(new WatchUi.MenuItem("None", null, "obstacle_step", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("Every 1 point", null, "obstacle_step", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("Every 2 points", null, "obstacle_step", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("Every 3 points", null, "obstacle_step", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("Every 5 points", null, "obstacle_step", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("Every 7 points", null, "obstacle_step", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("Every 10 points", null, "obstacle_step", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
+            Menu.addItem(new WatchUi.MenuItem("Every 15 points", null, "obstacle_step", {:alignment=>WatchUi.MenuItem.MENU_ITEM_LABEL_ALIGN_LEFT}));
             WatchUi.pushView(Menu, new $.Menu2SampleSubMenuDelegate(_parent), WatchUi.SLIDE_UP);
         } else if (id.equals("wall_death")) {
             var toogleMenuItem = menuItem as WatchUi.ToggleMenuItem;
@@ -73,20 +86,14 @@ class Menu2SampleSubMenuDelegate extends WatchUi.Menu2InputDelegate {
         var label = item.getLabel() as String;
         var val = item.getId() as String;
         switch (val) {
-            case "24":
-            case "18":
-            case "12":
-            case "8":
-            case "6":
+            case "arena_size":
                 setArenaSize(label);
                 break;
-            case "2000":
-            case "1500":
-            case "1000":
-            case "500":
-            case "333":
-            case "250":
+            case "game_speed":
                 setGameSpeed(label);
+                break;
+            case "obstacle_step":
+                setObstacleStep(label);
                 break;
         }
 
@@ -103,6 +110,11 @@ class Menu2SampleSubMenuDelegate extends WatchUi.Menu2InputDelegate {
     function setGameSpeed(speed as String) as Void {
         Storage.setValue("game_speed", speed);
         _parent.getItem(1).setSubLabel(speed);
+    }
+
+    function setObstacleStep(step as String) as Void {
+        Storage.setValue("obstacle_step", step);
+        _parent.getItem(2).setSubLabel(step);
     }
 
     //! Handle the back key being pressed

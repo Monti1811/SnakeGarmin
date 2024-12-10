@@ -4,6 +4,13 @@ import Toybox.Lang;
 import Toybox.Timer;
 import Toybox.Application.Storage;
 
+enum ArenaField {
+    EMPTY = 0,
+    SNAKE = 1,
+    EATING_BLOCK = 2,
+    OBSTACLE = 3
+}
+
 class snake2GameView extends WatchUi.View {
 
     // Arena
@@ -14,7 +21,8 @@ class snake2GameView extends WatchUi.View {
     private var size_block_fill as Number = 9;
     private var size_x as Number = 24;
     private var size_y as Number = 24;
-    private var arena_array as Array<Number>;
+    private var arena_array as Array<ArenaField>;
+    private var free_spaces as Number = size_x * size_y;
 
     private var wall_death as Boolean = false;
 
@@ -29,6 +37,8 @@ class snake2GameView extends WatchUi.View {
     private var snake_body as Array<[Number, Number]> = new [size_x * size_y];
     private var current_points as Number = 0;
     private var eating_block as [Number, Number] = [0, 0];
+    private var num_obstacles as Number = 0;
+    private var obstacle_step as Number = 5;
 
     // Movement
     private var has_moved as Boolean = false;
@@ -54,22 +64,30 @@ class snake2GameView extends WatchUi.View {
         timer_base_step = timer_step;
 
         speed_up = Storage.getValue("speed_up") as Boolean;
+        var _obstacle_step = Storage.getValue("obstacle_step") as String;
+        if (_obstacle_step.equals("None")) {
+            obstacle_step = 65535;
+        } else {
+            // Remove "Every " from string
+            _obstacle_step = _obstacle_step.substring(6, null);
+            obstacle_step = _obstacle_step.toNumber();
+        }
 
 
         // Initialize game
         _timer = new Timer.Timer();
-        arena_array = new Array<Number>[size_x * size_y];
+        arena_array = new Array<ArenaField>[size_x * size_y];
 
         for (var i = 0; i < size_x; i++) {
             for (var j = 0; j < size_y; j++) {
-                arena_array[i + j * size_x] = 0;
+                arena_array[i + j * size_x] = EMPTY;
             }
         }
 
         // Create starting Snake
         for (var i = 0; i < snake_length; i++) {
             var pos = PosToIndex(size_x/2 + i, size_y/2);
-            arena_array[pos] = 1;
+            arena_array[pos] = SNAKE;
             snake_body[i] = [size_x/2 + i, size_y/2];
         }
 
@@ -117,10 +135,11 @@ class snake2GameView extends WatchUi.View {
         timer_run = false;
         
         DrawEatingBlock(dc, eating_block[0], eating_block[1]);
+        DrawObstacles(dc);
         DrawSnake(dc);
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.drawText(240, 310, Graphics.FONT_TINY, current_points, Graphics.TEXT_JUSTIFY_CENTER);
-
+        free_spaces = size_x * size_y - snake_length - 1 - num_obstacles;
         
     }
 
@@ -133,21 +152,29 @@ class snake2GameView extends WatchUi.View {
 
     function CalcTimerStep() as Number {
         // Calculate timer step based on current points
-        if (current_points > 90) {
+        var temp = timer_base_step - current_points * 10;
+        if (temp < 100) {
             return 100;
         } else {
-            return timer_base_step - current_points * 10;
+            return temp;
         }
     }
 
-    function DrawEatingBlock(dc as Dc, x as Number, y as Number) as Void {
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+    function DrawBlock(dc as Dc, x as Number, y as Number, color as ColorValue) as Void {
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.fillRectangle(start_x + x  * size_block, start_y + y * size_block, size_block_fill, size_block_fill);
     }
 
+    function DrawEatingBlock(dc as Dc, x as Number, y as Number) as Void {
+        DrawBlock(dc, x, y, Graphics.COLOR_WHITE);
+    }
+
     function DrawSnakeBlock(dc as Dc, x as Number, y as Number) as Void {
-        dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
-        dc.fillRectangle(start_x + x  * size_block, start_y + y * size_block, size_block_fill, size_block_fill);
+        DrawBlock(dc, x, y, Graphics.COLOR_GREEN);
+    }
+
+    function DrawObstacle(dc as Dc, x as Number, y as Number) as Void {
+        DrawBlock(dc, x, y, Graphics.COLOR_RED);
     }
 
     function DrawSnake(dc as Dc) as Void {
@@ -156,13 +183,51 @@ class snake2GameView extends WatchUi.View {
         }
     }
 
+    function DrawObstacles(dc as Dc) as Void {
+        for (var i = 0; i < size_x; i++) {
+            for (var j = 0; j < size_y; j++) {
+                if (arena_array[PosToIndex(i, j)] == OBSTACLE) {
+                    DrawObstacle(dc, i, j);
+                }
+            }
+        }
+    }
+
     function AddEatingBlock() {
         // Add random eating block
-        while (snake_length < size_x * size_y) {
+        while (free_spaces > 0) {
             var sb_ = Math.rand() % (size_x * size_y);
             if (arena_array[sb_] == 0) {
                 eating_block = [sb_ % size_x, sb_ / size_x];
-                arena_array[sb_] = 2;
+                arena_array[sb_] = EATING_BLOCK;
+                break;
+            }
+        }
+    }
+
+    // Check if any of the surrounding blocks are occupied by the snake
+    function hasSnakePieceNear(x as Number, y as Number) as Boolean {
+        if (x > 0 && arena_array[PosToIndex(x - 1, y)] == SNAKE) {
+            return true;
+        }
+        if (x < size_x - 1 && arena_array[PosToIndex(x + 1, y)] == SNAKE) {
+            return true;
+        }
+        if (y > 0 && arena_array[PosToIndex(x, y - 1)] == SNAKE) {
+            return true;
+        }
+        if (y < size_y - 1 && arena_array[PosToIndex(x, y + 1)] == SNAKE) {
+            return true;
+        }
+        return false;
+    }
+
+    function AddRandomObstacle() {
+        // Add random obstacle
+        while (free_spaces > 0) {
+            var sb_ = Math.rand() % (size_x * size_y);
+            if (arena_array[sb_] == EMPTY && !hasSnakePieceNear(sb_ % size_x, sb_ / size_x)) {
+                arena_array[sb_] = OBSTACLE;
                 break;
             }
         }
@@ -201,14 +266,21 @@ class snake2GameView extends WatchUi.View {
             return false;
         }
 
+        
+
 
         if (wall_death) {
             // Check if new head position is outside the arena
-            if (new_head_x < 0 || new_head_x >= size_x || new_head_y < 0 || new_head_y >= size_y) {
+            if (
+                (new_head_x < 0 || new_head_x >= size_x || new_head_y < 0 || new_head_y >= size_y) ||
+                arena_array[PosToIndex(new_head_x, new_head_y)] == OBSTACLE
+            ) {
                 // Game over
                 GameOver();
                 return false;
             }
+            // Check if snake hit an obstacle
+
         } else {
             // Wrap around the edges
             if (new_head_x < 0) {
@@ -222,13 +294,18 @@ class snake2GameView extends WatchUi.View {
             } else if (new_head_y >= size_y) {
                 new_head_y = 0;
             }
+            if (arena_array[PosToIndex(new_head_x, new_head_y)] == OBSTACLE) {
+                // Game over
+                GameOver();
+                return false;
+            }
         }
         
 
         new_head_pos = [new_head_x, new_head_y];
         new_head_index = PosToIndex(new_head_x, new_head_y);
 
-        if (arena_array[new_head_index] == 1) {
+        if (arena_array[new_head_index] == SNAKE) {
             // Game over
             GameOver();
             return false;
@@ -245,6 +322,10 @@ class snake2GameView extends WatchUi.View {
             current_points += 1;
             AddSnakeBlock(last_snake_block);
             AddEatingBlock();
+            if (current_points % obstacle_step == 0) {
+                AddRandomObstacle();
+                num_obstacles += 1;
+            }
         } 
         // Set value of head only after eating block check
         last_direction = direction;
@@ -254,18 +335,18 @@ class snake2GameView extends WatchUi.View {
 
     function AddSnakeBlock(last_snake_block as [Number, Number]) as Void {
         snake_body[snake_length - 1] = last_snake_block;
-        arena_array[PosToIndex(last_snake_block[0], last_snake_block[1])] = 0;
+        arena_array[PosToIndex(last_snake_block[0], last_snake_block[1])] = EMPTY;
     }
 
     function MoveSnake(new_head_pos as [Number, Number]) as Void {
         // Remove tail
         var snake_tail = snake_body[snake_length - 1];
-        arena_array[PosToIndex(snake_tail[0], snake_tail[1])] = 0;
+        arena_array[PosToIndex(snake_tail[0], snake_tail[1])] = EMPTY;
         // Move body
         for (var i = snake_length - 1; i > 0; i--) {
             snake_body[i] = snake_body[i - 1];
         }
-        arena_array[PosToIndex(new_head_pos[0], new_head_pos[1])] = 1;
+        arena_array[PosToIndex(new_head_pos[0], new_head_pos[1])] = SNAKE;
         snake_body[0] = new_head_pos;
         // PrintArena(0);
     }
